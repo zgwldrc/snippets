@@ -1,0 +1,86 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "notifications:ListNotificationHubs",
+                "iam:ListRoles",
+                "ssm:Describe*",
+                "ssm:Get*",
+                "ssm:List*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "SendCommand",
+            "Effect": "Allow",
+            "Action": [
+                "ssm:GetDocument",
+                "ssm:StartSession",
+                "ssm:SendCommand"
+            ],
+            "Resource": [
+                "arn:aws:ec2:ap-southeast-1:992382737292:instance/i-0476d965a0e3f2a21",
+                "arn:aws:ssm:*:992382737292:managed-instance/*",
+                "arn:aws:ssm:*:992382737292:document/SSM-SessionManagerRunShell",
+                "arn:aws:ssm:*:*:document/AWS-RunShellScript",
+                "arn:aws:ssm:*:*:document/AWS-PasswordReset",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-AddUsersToGroups",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-CopyFileSystemItem",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-CreateDirectory",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-CreateGroup",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-CreateUser",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-CreateUserInteractive",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-CreateWindowsRegistryKey",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-DeleteFileSystemItem",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-DeleteGroup",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-DeleteUser",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-DeleteWindowsRegistryKey",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-DeleteWindowsRegistryValue",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-GetDiskInformation",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-GetFileContent",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-GetFileSystemContent",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-GetGroups",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-GetPerformanceCounters",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-GetProcessDetails",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-GetUsers",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-GetWindowsEvents",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-GetWindowsRegistryContent",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-MountVolume",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-MoveFileSystemItem",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-RemoveUsersFromGroups",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-RenameFileSystemItem",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-SetWindowsRegistryValue",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-StartProcess",
+                "arn:aws:ssm:*:*:document/AWSFleetManager-TerminateProcess"
+            ]
+        },
+        {
+            "Sid": "TerminateSession",
+            "Effect": "Allow",
+            "Action": [
+                "ssm:TerminateSession"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "ssm:resourceTag/aws:ssmmessages:session-id": [
+                        "${aws:userid}"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "KMS",
+            "Effect": "Allow",
+            "Action": [
+                "kms:Decrypt",
+                "kms:GenerateDataKey"
+            ],
+            "Resource": [
+                "arn:aws:kms:ap-southeast-1:992382737292:key/d67b443c-6a81-44d0-8885-2caa3991f8c4"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,132 @@
+---
+# https://eksctl.io/usage/vpc-configuration/#use-existing-vpc-other-custom-configuration
+# https://github.com/weaveworks/eksctl/tree/main/examples
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: oh0t
+  region: ap-southeast-1
+  version: "1.33"
+  # 托管节点与EKS机群附加标签
+  tags:
+    env_id: oh0t
+    env_type: test
+
+# Enable OIDC for proper IAM integration with service accounts
+iam:
+  withOIDC: true
+# subnets are tagged with at least the following:
+# kubernetes.io/cluster/<name> tag set to either shared or owned
+# kubernetes.io/role/internal-elb tag set to 1 for private subnets
+# kubernetes.io/role/elb tag set to 1 for public subnets
+# correctly configured internet and/or NAT gateways
+# routing tables have correct entries and the network is functional
+# all public subnets should have the property MapPublicIpOnLaunch enabled 
+# (i.e. Auto-assign public IPv4 address in the AWS console)
+vpc:
+  cidr: 10.3.0.0/16
+
+# cluster AZs must be set explicitly for single AZ nodegroup example to work
+# vpc.subnets and availabilityZones cannot be set at the same time
+# availabilityZones: ["ap-southeast-1a", "ap-southeast-1b", "ap-southeast-1c"]
+
+managedNodeGroups:
+- name: apisix-c5large-2c4g-v133-a
+  minSize: 1
+  maxSize: 10
+  desiredCapacity: 1
+  instanceType: c5.large
+  privateNetworking: true
+  volumeSize: 100
+  availabilityZones:
+  - ap-southeast-1a
+  ssh:
+    allow: true
+    publicKeyName: "key0"
+  taints:
+  - key: apisix
+    value: "true"
+    effect: "NoSchedule"
+
+- name: general-m5large-2c8g-v133-a
+  minSize: 1
+  maxSize: 10
+  desiredCapacity: 3
+  instanceType: m5.large
+  privateNetworking: true
+  volumeSize: 100
+  availabilityZones:
+  - ap-southeast-1a
+  ssh:
+    allow: true
+    publicKeyName: "key0"
+
+  # ces cachecenter 0.202 69.4 MiB * 1
+  # ces historyreader 0.0110 5.42 MiB
+  # ces historywriter 0.0805 7.91 MiB
+  # ces marketprice 0.100 3.19 GiB
+  # ces matchengine 2.34 8 GiB
+  # ces monitorcenter 0.000342 1.30 MiB
+  # ces tradesummary 0.156 1.26 GiB
+- name: ces-c52xlarge-8c16g-v133-a
+  minSize: 1
+  maxSize: 10
+  desiredCapacity: 1
+  instanceType: c5.2xlarge
+  privateNetworking: true
+  volumeSize: 100
+  availabilityZones:
+  - ap-southeast-1a
+  ssh:
+    allow: true
+    publicKeyName: "key0"
+  taints:
+  - key: ces
+    value: "1"
+    effect: NoSchedule
+
+- name: narwhal-marketprice-r5large-2c16g-v133-a
+  minSize: 1
+  maxSize: 10
+  desiredCapacity: 1
+  instanceType: r5.large
+  privateNetworking: true
+  volumeSize: 100
+  availabilityZones:
+  - ap-southeast-1a
+  ssh:
+    allow: true
+    publicKeyName: "key0"
+  taints:
+  - key: landry-narwhal-marketprice
+    value: "1"
+    effect: NoSchedule    
+  
+  # run narwhal matchengine 2.23 4 GiB	 * 1
+  # narwhal-marketindex 0.0477 20.5 MiB	* 1
+  # narwhal-alertcenter 0.000622 2.51 MiB * 1
+  # narwhal-cachecenter 0.591 135 MiB	* 1
+  # narwhal-historyreader 0.000544 5.63 MiB * 1
+  # narwhal-historywriter 0.0308  20.8 MiB * 1
+  # narwhal-monitorcenter 0.00213 1.32 MiB * 1
+  # narwhal-tradesummary 0.142 1.62 GiB * 1
+  # clairvoy-web 0.000000 0.00 MiB * 1
+  # landry-gateway-web 0.000000 0.00 MiB * 1
+  # landry-trans-web
+- name: narwhal-matchengine-m5xlarge-4c16g-v133-a
+  minSize: 1
+  maxSize: 10
+  desiredCapacity: 1
+  instanceType: m5.xlarge
+  privateNetworking: true
+  volumeSize: 100
+  availabilityZones:
+  - ap-southeast-1a
+  ssh:
+    allow: true
+    publicKeyName: "key0"
+  taints:
+  - key: landry-narwhal
+    value: "1"
+    effect: NoSchedule    
